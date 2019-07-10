@@ -34,7 +34,7 @@ steps:
     projects: '**/src/**/*.csproj'
 
 - script: |
-    dotnet publish ./src/LetsEncrypt.Client/LetsEncrypt.Client --configuration "Release" --output ./src/LetsEncrypt.Client/LetsEncrypt.Client/bin/Release/publish
+    dotnet publish ./src/LetsEncrypt.Client/LetsEncrypt.Client --configuration "Release" --output bin/Release/publish
 
 - script: |
     cd ./src/LetsEncrypt.Client/LetsEncrypt.Client
