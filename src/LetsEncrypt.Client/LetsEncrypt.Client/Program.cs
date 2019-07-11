@@ -102,7 +102,7 @@ namespace LetsEncrypt.Client
 
             while (chall.Status == ChallengeStatus.Pending)
             {
-                await Task.Delay(10000);
+                await Task.Delay(_configuration.Delay);
                 chall = await httpChallenge.Validate();
             }
 
