@@ -40,7 +40,7 @@ namespace LetsEncrypt.Client
                     Log($" X. ERROR {ex}");
                 }
 
-                await Task.Delay(60000);
+                await Task.Delay(_configuration.Delay);
             }
         }
 
@@ -102,7 +102,7 @@ namespace LetsEncrypt.Client
 
             while (chall.Status == ChallengeStatus.Pending)
             {
-                await Task.Delay(_configuration.Delay);
+                await Task.Delay(10000);
                 chall = await httpChallenge.Validate();
             }
 
