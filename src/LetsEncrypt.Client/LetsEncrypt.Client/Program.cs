@@ -23,7 +23,9 @@ namespace LetsEncrypt.Client
             {
                 try
                 {
-                    if (CertificateIsAboutToExpire())
+                    (bool isAboutToExpire, string notAfter) = CertificateIsAboutToExpire();
+
+                    if (isAboutToExpire)
                     {
                         var acme = await LoadAccount();
                         var order = await CreateOrder(acme);
@@ -32,7 +34,7 @@ namespace LetsEncrypt.Client
                     }
                     else
                     {
-                        Log(" V. Current certificate is still valid :)");
+                        Log($" V. Current certificate is still valid :) [{notAfter}]");
                     }
                 }
                 catch (Exception ex)
@@ -44,26 +46,28 @@ namespace LetsEncrypt.Client
             }
         }
 
-        private static bool CertificateIsAboutToExpire()
+        private static (bool, string) CertificateIsAboutToExpire()
         {
             var certPath = Path.Combine(_configuration.CertificatePath, $"{_configuration.DomainName}.pfx");
             var certPass = _configuration.CertificatePassword;
 
             if (!File.Exists(certPath))
             {
-                return true;
+                return (true, string.Empty);
             }
 
-            var isAboutToExpire = false;
+            bool isAboutToExpire = false;
+            string notAfter = string.Empty;
 
             X509Certificate2Collection collection = new X509Certificate2Collection();
             collection.Import(certPath, certPass, X509KeyStorageFlags.PersistKeySet);
             foreach (var cert in collection)
             {
                 isAboutToExpire = isAboutToExpire || cert.NotAfter < DateTime.Today.AddDays(7);
+                notAfter = $"{cert.NotAfter}";
             }
 
-            return isAboutToExpire;
+            return (isAboutToExpire, notAfter);
         }
 
         private static async Task GenerateOrder(IOrderContext order)
