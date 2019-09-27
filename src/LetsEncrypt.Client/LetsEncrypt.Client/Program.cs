@@ -64,7 +64,7 @@ namespace LetsEncrypt.Client
             foreach (var cert in collection)
             {
                 isAboutToExpire = isAboutToExpire || cert.NotAfter < DateTime.Today.AddDays(7);
-                notAfter = $"{cert.NotAfter}";
+                notAfter = $"{cert.NotAfter:dd-MM-yyyy}";
             }
 
             return (isAboutToExpire, notAfter);
